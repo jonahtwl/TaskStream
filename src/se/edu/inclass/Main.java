@@ -6,7 +6,8 @@ import se.edu.inclass.task.Task;
 import se.edu.inclass.task.TaskNameComparator;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class Main {
 
@@ -18,8 +19,12 @@ public class Main {
 
         System.out.println("Printing deadlines");
         printDeadlines(tasksData);
-
         System.out.println("Total number of deadlines: " + countDeadlines(tasksData));
+        printDeadlinesUsingStreams(tasksData);
+
+        ArrayList<Task> filteredList = filterTasksByString(tasksData, "11");
+        System.out.println("Filtered task list");
+        printData(tasksData);
 
         printDataWithStreams(tasksData);
         System.out.println("Total number of deadlines (using streams): "
@@ -63,11 +68,19 @@ public class Main {
             }
         }
     }
-
-    public static void printDeadlinesUsingStreams(ArrayList<Task> tasks) {
-        System.out.println("Printing deadlines using streams");
-        tasks.stream()
-                .filter((t) -> t instanceof Deadline)  // predicate
+    
+    public static void printDeadlinesUsingStreams(ArrayList<Task> tasksData) {
+        tasksData.stream()
+                .filter((s) -> s instanceof Deadline)
+                .sorted((a, b) -> a.getDescription().toLowerCase().compareTo(b.getDescription().toLowerCase()))
                 .forEach(System.out::println);
     }
+
+    public static ArrayList<Task> filterTasksByString(ArrayList<Task> tasksData, String filterString) {
+        ArrayList<Task> filteredList = (ArrayList<Task>) tasksData.stream()
+                .filter((s) -> s.getDescription().contains(filterString))
+                .collect(toList());
+        return filteredList;
+    }
+
 }
